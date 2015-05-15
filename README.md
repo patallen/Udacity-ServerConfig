@@ -2,6 +2,19 @@
 
 IP: 52.24.224.202
 
+### Set Up Remote Acces user - grader
+1. ssh as root with udacity_rsa key
+1. `adduser grader` and follow prompt
+1. `adduser grader sudo` to put grader in sudo group
+1. `login grader` and enter password
+
+### Change default SSH settings
+1. Change default SSH port
+	- `sudo vim /etc/ssh/sshd_config`
+	- Change `Port 22` to `Port 2200`
+1. Turn off root remote access:
+	- Change `PermitRootLogin without-password` to `PermitRootLogin no`
+
 ### Install Dependencies
 - `sudo apt-get install libpq-dev apache2 libapache2-mod-wsgi python-dev python-pip git postgresql`
 
@@ -73,8 +86,8 @@ IP: 52.24.224.202
 ### Config from environment variables
 1. Edit app init file: `sudo vim /var/www/CatalogApp/app/__init__.py`
 1. Change app.config from 'from_object' to 'from_envvar':
-  - `app.config.from_envvar('CATALOGAPP_SETTINGS')
-1. Create environment variable in .wsgi file 'sudo vim /var/www/CatalogApp/catalogapp.wsgi`
+  - `app.config.from_envvar('CATALOGAPP_SETTINGS')`
+1. Create environment variable in .wsgi file `sudo vim /var/www/CatalogApp/catalogapp.wsgi`
 1. Add lines after current imports:
 
   ```
@@ -86,3 +99,21 @@ IP: 52.24.224.202
 1. `cd /var/www/CatalogApp`
 1. `. venv/bin/activate`
 1. `python fill_db.py`
+
+### Set up Munin for monitoring:
+
+Follow instructions in this [Digital Ocean Article](https://www.digitalocean.com/community/tutorials/how-to-install-munin-on-an-ubuntu-vps)
+
+### Automatic Updates for Ubuntu Server
+1. `sudo apt-get install unattended-upgrades`
+1. Edit config : `sudo vim /etc/apt/apt.conf.d/50unattended-upgrades`
+  - Uncomment line in 'allowed-origins' section `"${distro_id}:${distro_codename}-updates";`
+1. Enable updates - open: `sudo vim /etc/apt/apt.conf.d/10periodic` and set:
+
+	```
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
+```
+Note: These instructions were found [here](https://help.ubuntu.com/lts/serverguide/automatic-updates.html)
