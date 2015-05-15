@@ -2,6 +2,8 @@
 
 IP: 52.24.224.202
 
+## Set Up Server
+____
 ### Set Up Remote Acces user - grader
 1. ssh as root with udacity_rsa key
 1. `adduser grader` and follow prompt
@@ -15,6 +17,25 @@ IP: 52.24.224.202
 1. Turn off root remote access:
 	- Change `PermitRootLogin without-password` to `PermitRootLogin no`
 
+### Generate SSH Key pair for grader
+1. On client machine `ssh keygen`
+1. Copy the contents of the generated `~/.ssh/id_rsa.pub`
+1. On the server as grader user, `mkdir ~/.ssh && sudo vim ~/.ssh/authorized_keys`
+1. Paste in the id_rda.pub contents and save.
+1. Restart ssh server with `sudo service ssh restart`
+
+You can now ssh into server with `sudo ssh -p 2200 grader@ip.ad.dr.ess`
+
+### Set up firewall
+1. Enable UFW (Universal Firewall) with `sudo ufw enable`
+1. Allow desired ports:
+	- `sudo ufw allow 80/tcp`
+	- `sudo ufw allow 123/tcp`
+	- `sudo ufw allow 2200/tcp`
+1. Confirm that changes were made with `sudo ufw status`
+
+## Set Up Site
+____
 ### Install Dependencies
 - `sudo apt-get install libpq-dev apache2 libapache2-mod-wsgi python-dev python-pip git postgresql`
 
@@ -100,6 +121,8 @@ IP: 52.24.224.202
 1. `. venv/bin/activate`
 1. `python fill_db.py`
 
+## Set Up Services
+____
 ### Set up Munin for monitoring:
 
 Follow instructions in this [Digital Ocean Article](https://www.digitalocean.com/community/tutorials/how-to-install-munin-on-an-ubuntu-vps)
